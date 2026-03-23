@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-eyebrow"><div class="auth-line"></div>Welcome Back</div>
+    <div class="auth-title">Sign in to<br><i>Keeper.</i></div>
+    <div class="auth-sub">Your finances are waiting for you.</div>
+    <form method="POST">
+      <div class="fg">
+        <label class="fl2">Email Address</label>
+        <input type="email" name="email" required placeholder="your@email.com" class="fi2">
+      </div>
+      <div class="fg" style="margin-bottom:26px;">
+        <label class="fl2">Password</label>
+        <input type="password" name="password" required placeholder="••••••••" class="fi2">
+      </div>
+      <button type="submit" class="btn-p" style="width:100%;text-align:center;padding:13px;">
+        Sign In →
+      </button>
+    </form>
+    <div class="auth-divider"></div>
+    <div class="auth-footer">
+      Don't have an account? <a href="{{ url_for('main.register') }}">Get started for free</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

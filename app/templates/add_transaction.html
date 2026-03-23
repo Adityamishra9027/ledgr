@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="min-height:calc(100vh - 66px);display:flex;align-items:center;justify-content:center;padding:2rem;">
+  <div class="form-wrap">
+    <div class="form-eyebrow"><div class="form-line"></div>New Entry</div>
+    <div class="form-title">Record a<br><i>Transaction.</i></div>
+    <div class="form-sub">Log an income or an expense — it only takes a moment.</div>
+    <div class="form-card">
+      <form method="POST" id="txnForm">
+
+        <div class="fg">
+          <label class="fl2">Transaction Type</label>
+          <div class="type-grid">
+            <input type="radio" name="type" value="income" id="r-i" style="display:none;" required>
+            <button type="button" class="type-btn" id="btn-i" onclick="pick('income')">↑ Income</button>
+            <input type="radio" name="type" value="expense" id="r-e" style="display:none;">
+            <button type="button" class="type-btn" id="btn-e" onclick="pick('expense')">↓ Expense</button>
+          </div>
+        </div>
+
+        <div class="fg">
+          <label class="fl2">Amount (₹)</label>
+          <input type="number" name="amount" required placeholder="0" min="1" step="0.01" class="fi2"
+            style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;letter-spacing:-0.02em;">
+        </div>
+
+        <div class="fg">
+          <label class="fl2">Category</label>
+          <select name="category" class="fs2">
+            <optgroup label="Income">
+              <option value="Freelance">Freelance Work</option>
+              <option value="Salary">Salary</option>
+              <option value="Business">Business Revenue</option>
+              <option value="Gig">Gig Work</option>
+              <option value="Investment">Investment Returns</option>
+              <option value="Other Income">Other Income</option>
+            </optgroup>
+            <optgroup label="Expense">
+              <option value="Food">Food &amp; Dining</option>
+              <option value="Transport">Transport</option>
+              <option value="Shopping">Shopping</option>
+              <option value="Bills">Bills &amp; Utilities</option>
+              <option value="Entertainment">Entertainment</option>
+              <option value="Health">Health &amp; Wellness</option>
+              <option value="Education">Education</option>
+              <option value="Other Expense">Other Expense</option>
+            </optgroup>
+          </select>
+        </div>
+
+        <div class="fg" style="margin-bottom:0;">
+          <label class="fl2">
+            Description
+            <span style="color:var(--muted2);text-transform:none;letter-spacing:0;font-size:11px;"> — optional</span>
+          </label>
+          <input type="text" name="description" placeholder="e.g. Payment received from Rahul for design work" class="fi2">
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-p" style="padding:12px 28px;">Save Transaction ✓</button>
+          <a href="{{ url_for('main.dashboard') }}" class="form-back">← Back to Dashboard</a>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+function pick(t){
+  document.getElementById('r-i').checked = t==='income';
+  document.getElementById('r-e').checked = t==='expense';
+  document.getElementById('btn-i').className = 'type-btn' + (t==='income' ? ' ai' : '');
+  document.getElementById('btn-e').className = 'type-btn' + (t==='expense' ? ' ae' : '');
+}
+</script>
+{% endblock %}

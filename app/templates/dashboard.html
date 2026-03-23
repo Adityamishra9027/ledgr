@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="flex:1;display:grid;grid-template-columns:1.2fr 0.8fr;min-height:calc(100vh - 66px);">
+
+  <!-- ── LEFT ── -->
+  <div style="padding:56px 60px 40px;border-right:1px solid var(--border);display:flex;flex-direction:column;justify-content:space-between;">
+    <div>
+      <!-- Eyebrow -->
+      <div style="display:flex;align-items:center;gap:14px;font-family:'Tenor Sans',sans-serif;font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:30px;">
+        <div style="width:24px;height:1px;background:var(--gold);flex-shrink:0;"></div>
+        Financial Overview
+      </div>
+
+      <!-- Time-based greeting -->
+      <h1 style="font-family:'Cormorant Garamond',serif;font-size:78px;font-weight:200;letter-spacing:-0.02em;line-height:0.88;color:var(--text);margin-bottom:14px;">
+        {{ greeting }},<br><i style="color:var(--gold);">{{ current_user.name.split()[0] }}.</i>
+      </h1>
+
+      <div style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:200;font-style:italic;color:var(--muted);margin-bottom:32px;">
+        {{ greeting_sub }}
+      </div>
+
+      <p style="font-size:14px;font-weight:200;line-height:2.1;color:var(--muted);max-width:420px;margin-bottom:44px;letter-spacing:0.02em;">
+        Your complete financial picture — income, expenses, and net balance — all in one place. Updated in real time, always at your fingertips.
+      </p>
+
+      <div style="display:flex;align-items:center;gap:28px;">
+        <a href="{{ url_for('main.add_transaction') }}" class="btn-p">Add Transaction</a>
+        <a href="{{ url_for('main.add_transaction') }}" class="btn-g" style="font-size:10px;">
+          New Entry <span style="display:inline-block;transition:transform 0.3s;">→</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);padding-top:32px;border-top:1px solid var(--border);margin-top:56px;">
+      <div style="padding-right:28px;border-right:1px solid var(--border);">
+        <div style="font-family:'Tenor Sans',sans-serif;font-size:9px;letter-spacing:0.24em;text-transform:uppercase;color:var(--muted2);margin-bottom:12px;">Total Income</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;letter-spacing:-0.02em;margin-bottom:6px;color:var(--inc);">₹{{ "%.0f"|format(total_income) }}</div>
+        <div style="font-family:'Tenor Sans',sans-serif;font-size:9px;letter-spacing:0.12em;color:var(--muted2);">Across all sources</div>
+      </div>
+      <div style="padding:0 28px;border-right:1px solid var(--border);">
+        <div style="font-family:'Tenor Sans',sans-serif;font-size:9px;letter-spacing:0.24em;text-transform:uppercase;color:var(--muted2);margin-bottom:12px;">Total Expense</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;letter-spacing:-0.02em;margin-bottom:6px;color:var(--exp);">₹{{ "%.0f"|format(total_expense) }}</div>
+        <div style="font-family:'Tenor Sans',sans-serif;font-size:9px;letter-spacing:0.12em;color:var(--muted2);">Across all categories</div>
+      </div>
+      <div style="padding-left:28px;">
+        <div style="font-family:'Tenor Sans',sans-serif;font-size:9px;letter-spacing:0.24em;text-transform:uppercase;color:var(--muted2);margin-bottom:12px;">Net Balance</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;letter-spacing:-0.02em;margin-bottom:6px;color:var(--gold);">₹{{ "%.0f"|format(balance) }}</div>
+        <div style="font-family:'Tenor Sans',sans-serif;font-size:9px;letter-spacing:0.12em;color:var(--muted2);">
+          {% if balance >= 0 %}Healthy position{% else %}Needs attention{% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── RIGHT ── -->
+  <div style="display:flex;flex-direction:column;">
+
+    <!-- Card -->
+    <div style="padding:36px 44px 28px;border-bottom:1px solid var(--border);display:flex;justify-content:center;align-items:center;flex-shrink:0;">
+      <div style="perspective:1400px;width:100%;">
+        <div id="c3d" style="width:100%;max-width:340px;height:200px;transform-style:preserve-3d;transition:transform 0.07s ease-out;cursor:pointer;position:relative;margin:0 auto;">
+          <div style="position:absolute;inset:0;border-radius:16px;background:linear-gradient(145deg,var(--card-bg),rgba(255,255,255,0.01));border:1px solid var(--card-border);padding:24px 28px;overflow:hidden;" id="cface">
+            <div id="cshine" style="position:absolute;inset:0;border-radius:16px;pointer-events:none;background:radial-gradient(ellipse 120px 80px at 50% 30%,rgba(196,163,90,0.12),transparent);"></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;position:relative;z-index:1;">
+              <div style="font-family:'Tenor Sans',sans-serif;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);">Keeper · Personal</div>
+              <div style="width:32px;height:22px;border-radius:4px;background:linear-gradient(135deg,var(--gold),var(--gold2));opacity:0.65;"></div>
+            </div>
+            <div style="position:relative;z-index:1;margin-bottom:16px;">
+              <div style="font-family:'Tenor Sans',sans-serif;font-size:8.5px;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted2);margin-bottom:5px;">Account Holder</div>
+              <div style="font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:300;letter-spacing:0.1em;color:var(--text);">{{ current_user.name }}</div>
+            </div>
+            <div style="position:relative;z-index:1;">
+              <div style="font-family:'Tenor Sans',sans-serif;font-size:8.5px;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted2);margin-bottom:5px;">Net Balance</div>
+              <div style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;letter-spacing:-0.02em;color:var(--gold);">₹{{ "%.0f"|format(balance) }}</div>
+            </div>
+            <div style="position:absolute;bottom:18px;right:22px;display:flex;z-index:1;">
+              <div style="width:22px;height:22px;border-radius:50%;background:rgba(196,163,90,0.45);"></div>
+              <div style="width:22px;height:22px;border-radius:50%;background:rgba(196,163,90,0.22);margin-left:-9px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Transactions -->
+    <div style="flex:1;overflow-y:auto;padding:0 44px 24px;">
+      <div id="txnhead" style="display:flex;align-items:center;justify-content:space-between;padding:20px 0 16px;border-bottom:1px solid var(--border);position:sticky;top:0;backdrop-filter:blur(12px);z-index:1;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;letter-spacing:0.03em;color:var(--text);">Recent Activity</div>
+        <span style="font-family:'Tenor Sans',sans-serif;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);">{{ transactions|length }} Entries</span>
+      </div>
+
+      {% if transactions %}
+        {% for txn in transactions %}
+        <div class="txn-item" style="display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.04);transition:padding 0.2s;cursor:default;"
+          onmouseover="this.style.paddingLeft='10px'" onmouseout="this.style.paddingLeft='0'">
+          <div style="display:flex;align-items:center;gap:16px;">
+            <div style="width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:300;flex-shrink:0;
+              {% if txn.type=='income' %}background:rgba(125,211,168,0.08);border:1px solid rgba(125,211,168,0.15);color:var(--inc);
+              {% else %}background:rgba(232,160,160,0.08);border:1px solid rgba(232,160,160,0.15);color:var(--exp);{% endif %}">
+              {% if txn.type=='income' %}↑{% else %}↓{% endif %}
+            </div>
+            <div>
+              <div style="font-size:14px;font-weight:300;color:var(--text);margin-bottom:4px;letter-spacing:0.01em;">{{ txn.description or txn.category }}</div>
+              <div style="font-family:'Tenor Sans',sans-serif;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);">{{ txn.category }} · {{ txn.date.strftime('%d %b, %I:%M %p') }}</div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;letter-spacing:-0.01em;color:{% if txn.type=='income' %}var(--inc){% else %}var(--exp){% endif %};">
+              {% if txn.type=='income' %}+{% else %}-{% endif %}₹{{ "%.0f"|format(txn.amount) }}
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <span style="font-family:'Tenor Sans',sans-serif;font-size:8px;letter-spacing:0.12em;text-transform:uppercase;padding:3px 9px;border-radius:1px;
+                {% if txn.type=='income' %}background:rgba(125,211,168,0.07);color:rgba(125,211,168,0.65);border:1px solid rgba(125,211,168,0.14);
+                {% else %}background:rgba(232,160,160,0.07);color:rgba(232,160,160,0.65);border:1px solid rgba(232,160,160,0.14);{% endif %}">
+                {{ txn.type }}
+              </span>
+              <a href="{{ url_for('main.delete_transaction', id=txn.id) }}" onclick="return confirm('Remove this transaction?')"
+                style="font-family:'Tenor Sans',sans-serif;font-size:10px;color:var(--muted2);text-decoration:none;transition:color 0.2s;"
+                onmouseover="this.style.color='var(--exp)'" onmouseout="this.style.color='var(--muted2)'">✕</a>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div style="text-align:center;padding:64px 20px;">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:200;font-style:italic;color:var(--muted);margin-bottom:14px;">Nothing here yet.</div>
+          <div style="font-family:'Tenor Sans',sans-serif;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted2);margin-bottom:28px;">Your financial story begins with the first entry.</div>
+          <a href="{{ url_for('main.add_transaction') }}" class="btn-p">Add Your First Entry</a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<script>
+const c=document.getElementById('c3d'),sh=document.getElementById('cshine'),sc=c.parentElement;
+sc.addEventListener('mousemove',e=>{
+  const r=sc.getBoundingClientRect(),mx=(e.clientX-r.left)/r.width-0.5,my=(e.clientY-r.top)/r.height-0.5;
+  c.style.transform=`rotateY(${mx*22}deg) rotateX(${-my*16}deg) translateZ(20px)`;
+  sh.style.background=`radial-gradient(ellipse 120px 80px at ${(mx+0.5)*100}% ${(my+0.5)*100}%,rgba(196,163,90,0.14),transparent)`;
+});
+sc.addEventListener('mouseleave',()=>{
+  c.style.transition='transform 0.7s cubic-bezier(0.4,0,0.2,1)';
+  c.style.transform='rotateY(0) rotateX(0) translateZ(0)';
+  setTimeout(()=>c.style.transition='transform 0.07s ease-out',700);
+});
+const th=document.getElementById('txnhead'),root=document.getElementById('root');
+function fixHead(){th.style.background=root.classList.contains('light')?'rgba(242,239,232,0.96)':'rgba(6,6,10,0.92)';}
+fixHead();
+new MutationObserver(fixHead).observe(root,{attributes:true,attributeFilter:['class']});
+function fixTxn(){
+  document.querySelectorAll('.txn-item').forEach(el=>{
+    el.style.borderBottomColor=root.classList.contains('light')?'rgba(26,26,46,0.07)':'rgba(255,255,255,0.04)';
+  });
+}
+fixTxn();
+new MutationObserver(fixTxn).observe(root,{attributes:true,attributeFilter:['class']});
+</script>
+{% endblock %}
