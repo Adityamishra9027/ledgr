@@ -127,6 +127,68 @@ def delete_transaction(id):
         flash('Transaction removed.')
     return redirect(url_for('main.dashboard'))
 
+@main.route('/reports')
+@login_required
+def reports():
+    from sqlalchemy import extract
+    
+    # Monthly data — last 6 months
+    monthly_data = []
+    from datetime import datetime, timedelta
+    
+    for i in range(5, -1, -1):
+        date = datetime.now().replace(day=1) - timedelta(days=i*30)
+        month_income = db.session.query(
+            db.func.sum(Transaction.amount)
+        ).filter(
+            Transaction.user_id == current_user.id,
+            Transaction.type == 'income',
+            extract('month', Transaction.date) == date.month,
+            extract('year', Transaction.date) == date.year
+        ).scalar() or 0
+        
+        month_expense = db.session.query(
+            db.func.sum(Transaction.amount)
+        ).filter(
+            Transaction.user_id == current_user.id,
+            Transaction.type == 'expense',
+            extract('month', Transaction.date) == date.month,
+            extract('year', Transaction.date) == date.year
+        ).scalar() or 0
+        
+        monthly_data.append({
+            'month': date.strftime('%b'),
+            'income': float(month_income),
+            'expense': float(month_expense)
+        })
+    
+    # Category breakdown
+    categories = db.session.query(
+        Transaction.category,
+        db.func.sum(Transaction.amount).label('total')
+    ).filter_by(
+        user_id=current_user.id,
+        type='expense'
+    ).group_by(Transaction.category).all()
+    
+    total_income = db.session.query(
+        db.func.sum(Transaction.amount)
+    ).filter_by(user_id=current_user.id, type='income').scalar() or 0
+    
+    total_expense = db.session.query(
+        db.func.sum(Transaction.amount)
+    ).filter_by(user_id=current_user.id, type='expense').scalar() or 0
+    
+    balance = total_income - total_expense
+    
+    return render_template('reports.html',
+        monthly_data=monthly_data,
+        categories=categories,
+        total_income=total_income,
+        total_expense=total_expense,
+        balance=balance
+    )
+
 @main.route('/connect-whatsapp', methods=['POST'])
 @login_required
 def connect_whatsapp():

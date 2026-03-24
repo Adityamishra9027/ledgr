@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="flex:1;padding:48px 60px;max-width:1100px;margin:0 auto;width:100%;">
+
+  <!-- Header -->
+  <div style="margin-bottom:40px;">
+    <div style="display:flex;align-items:center;gap:14px;font-family:'Tenor Sans',sans-serif;font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:20px;">
+      <div style="width:24px;height:1px;background:var(--gold);"></div>Financial Reports
+    </div>
+    <h1 style="font-family:'Cormorant Garamond',serif;font-size:56px;font-weight:200;letter-spacing:-0.02em;line-height:0.95;color:var(--text);margin-bottom:10px;">
+      Your <i style="color:var(--gold);">Overview.</i>
+    </h1>
+    <p style="font-size:14px;font-weight:200;color:var(--muted);letter-spacing:0.02em;">A complete picture of your financial activity.</p>
+  </div>
+
+  <!-- Summary Cards -->
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:40px;">
+    <div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:16px;padding:24px;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--inc),transparent);"></div>
+      <div style="font-family:'Tenor Sans',sans-serif;font-size:8px;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted2);margin-bottom:10px;">Total Income</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:300;color:var(--inc);">₹{{ "%.0f"|format(total_income) }}</div>
+    </div>
+    <div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:16px;padding:24px;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--exp),transparent);"></div>
+      <div style="font-family:'Tenor Sans',sans-serif;font-size:8px;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted2);margin-bottom:10px;">Total Expense</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:300;color:var(--exp);">₹{{ "%.0f"|format(total_expense) }}</div>
+    </div>
+    <div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:16px;padding:24px;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),transparent);"></div>
+      <div style="font-family:'Tenor Sans',sans-serif;font-size:8px;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted2);margin-bottom:10px;">Net Balance</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:300;color:var(--gold);">₹{{ "%.0f"|format(balance) }}</div>
+    </div>
+  </div>
+
+  <!-- Charts Grid -->
+  <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:20px;margin-bottom:40px;">
+
+    <!-- Bar Chart — Monthly -->
+    <div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:16px;padding:28px;">
+      <div style="font-family:'Tenor Sans',sans-serif;font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted2);margin-bottom:6px;">Monthly Overview</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;color:var(--text);margin-bottom:24px;">Income vs Expense</div>
+      <canvas id="barChart" height="200"></canvas>
+    </div>
+
+    <!-- Pie Chart — Categories -->
+    <div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:16px;padding:28px;">
+      <div style="font-family:'Tenor Sans',sans-serif;font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted2);margin-bottom:6px;">Spending Breakdown</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;color:var(--text);margin-bottom:24px;">By Category</div>
+      {% if categories %}
+        <canvas id="pieChart" height="200"></canvas>
+      {% else %}
+        <div style="text-align:center;padding:40px 0;color:var(--muted);font-family:'Cormorant Garamond',serif;font-size:18px;font-style:italic;">No expense data yet.</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Category Table -->
+  {% if categories %}
+  <div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:16px;padding:28px;">
+    <div style="font-family:'Tenor Sans',sans-serif;font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted2);margin-bottom:6px;">Expense Breakdown</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;color:var(--text);margin-bottom:20px;">By Category</div>
+    <div style="height:1px;background:var(--border);margin-bottom:16px;"></div>
+    {% for cat in categories %}
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.03);">
+      <div style="font-size:13px;font-weight:300;color:var(--text);">{{ cat.category }}</div>
+      <div style="display:flex;align-items:center;gap:16px;">
+        <div style="width:120px;height:3px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;">
+          <div style="height:100%;background:var(--exp);border-radius:2px;width:{{ ((cat.total / total_expense) * 100)|int if total_expense > 0 else 0 }}%;"></div>
+        </div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:300;color:var(--exp);min-width:80px;text-align:right;">₹{{ "%.0f"|format(cat.total) }}</div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+const isDark = document.getElementById('root').classList.contains('dark');
+const textColor = isDark ? 'rgba(221,216,207,0.5)' : 'rgba(26,26,46,0.4)';
+const gridColor = isDark ? 'rgba(255,255,255,0.04)' : 'rgba(26,26,46,0.06)';
+
+// Bar Chart
+const barCtx = document.getElementById('barChart').getContext('2d');
+new Chart(barCtx, {
+  type: 'bar',
+  data: {
+    labels: {{ monthly_data | map(attribute='month') | list | tojson }},
+    datasets: [
+      {
+        label: 'Income',
+        data: {{ monthly_data | map(attribute='income') | list | tojson }},
+        backgroundColor: 'rgba(125,211,168,0.7)',
+        borderRadius: 4,
+        borderSkipped: false,
+      },
+      {
+        label: 'Expense',
+        data: {{ monthly_data | map(attribute='expense') | list | tojson }},
+        backgroundColor: isDark ? 'rgba(232,160,160,0.7)' : 'rgba(160,48,48,0.7)',
+        borderRadius: 4,
+        borderSkipped: false,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { labels: { color: textColor, font: { size: 11 } } }
+    },
+    scales: {
+      x: { ticks: { color: textColor }, grid: { color: gridColor } },
+      y: { ticks: { color: textColor, callback: v => '₹'+v.toLocaleString('en-IN') }, grid: { color: gridColor } }
+    }
+  }
+});
+
+{% if categories %}
+// Pie Chart
+const pieCtx = document.getElementById('pieChart').getContext('2d');
+new Chart(pieCtx, {
+  type: 'doughnut',
+  data: {
+    labels: {{ categories | map(attribute='category') | list | tojson }},
+    datasets: [{
+      data: {{ categories | map(attribute='total') | list | tojson }},
+      backgroundColor: ['rgba(232,160,160,0.8)','rgba(125,211,168,0.8)','rgba(196,163,90,0.8)','rgba(108,99,255,0.8)','rgba(90,160,232,0.8)','rgba(200,130,200,0.8)'],
+      borderWidth: 0,
+      hoverOffset: 6
+    }]
+  },
+  options: {
+    responsive: true,
+    cutout: '65%',
+    plugins: {
+      legend: { position: 'bottom', labels: { color: textColor, font: { size: 11 }, padding: 16 } }
+    }
+  }
+});
+{% endif %}
+</script>
+{% endblock %}
