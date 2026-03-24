@@ -51,7 +51,7 @@ def register():
         new_user.set_password(password)
         db.session.add(new_user)
         db.session.commit()
-        flash('Account created. Welcome to Keeper.')
+        flash('Account created. Welcome to Ledgr.')
         return redirect(url_for('main.login'))
     return render_template('register.html')
 
