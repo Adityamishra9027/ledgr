@@ -416,3 +416,28 @@ def whatsapp_webhook():
         msg.body('\n'.join(lines))
 
     return str(resp)
+
+
+@main.route('/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_transaction(id):
+    txn = Transaction.query.get_or_404(id)
+    if txn.user_id != current_user.id:
+        return redirect(url_for('main.dashboard'))
+    if request.method == 'POST':
+        txn.type = request.form.get('type')
+        txn.amount = float(request.form.get('amount'))
+        txn.category = request.form.get('category')
+        txn.description = request.form.get('description')
+        db.session.commit()
+        flash('Transaction updated successfully.')
+        return redirect(url_for('main.dashboard'))
+    total_income = db.session.query(
+        db.func.sum(Transaction.amount)
+    ).filter_by(user_id=current_user.id, type='income').scalar() or 0
+    total_expense = db.session.query(
+        db.func.sum(Transaction.amount)
+    ).filter_by(user_id=current_user.id, type='expense').scalar() or 0
+    balance = total_income - total_expense
+    return render_template('edit_transaction.html', txn=txn,
+        total_income=total_income, total_expense=total_expense, balance=balance)

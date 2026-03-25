@@ -102,6 +102,10 @@
               <a href="{{ url_for('main.delete_transaction', id=txn.id) }}" onclick="return confirm('Remove this transaction?')"
                 style="font-family:'Tenor Sans',sans-serif;font-size:10px;color:var(--muted2);text-decoration:none;transition:color 0.2s;"
                 onmouseover="this.style.color='var(--exp)'" onmouseout="this.style.color='var(--muted2)'">✕</a>
+                <a href="{{ url_for('main.edit_transaction', id=txn.id) }}"
+  style="font-family:'Tenor Sans',sans-serif;font-size:9px;color:var(--muted2);text-decoration:none;transition:color 0.2s;margin-right:4px;"
+  onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--muted2)'">✎</a>
+
             </div>
           </div>
         </div>

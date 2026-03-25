@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="min-height:calc(100vh - 108px);display:flex;align-items:center;justify-content:center;padding:2rem;">
+  <div class="form-wrap">
+    <div class="form-eyebrow"><div class="form-line"></div>Edit Entry</div>
+    <div class="form-title">Update <i>Transaction.</i></div>
+    <div class="form-sub">Modify the details below.</div>
+    <div class="form-card">
+      <form method="POST">
+        <div class="fg">
+          <label class="fl2">Transaction Type</label>
+          <div class="type-grid">
+            <input type="radio" name="type" value="income" id="r-i" style="display:none;" {% if txn.type=='income' %}checked{% endif %} required>
+            <button type="button" class="type-btn {% if txn.type=='income' %}ai{% endif %}" id="btn-i" onclick="pick('income')">↑ Income</button>
+            <input type="radio" name="type" value="expense" id="r-e" style="display:none;" {% if txn.type=='expense' %}checked{% endif %}>
+            <button type="button" class="type-btn {% if txn.type=='expense' %}ae{% endif %}" id="btn-e" onclick="pick('expense')">↓ Expense</button>
+          </div>
+        </div>
+        <div class="fg">
+          <label class="fl2">Amount (₹)</label>
+          <input type="number" name="amount" required value="{{ txn.amount|int }}" min="1" step="0.01" class="fi2"
+            style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;letter-spacing:-0.02em;">
+        </div>
+        <div class="fg">
+          <label class="fl2">Category</label>
+          <select name="category" class="fs2">
+            {% for cat in ['Freelance','Salary','Business','Gig','Investment','Other Income','Food','Transport','Shopping','Bills','Entertainment','Health','Education','Other Expense'] %}
+            <option value="{{ cat }}" {% if txn.category==cat %}selected{% endif %}>{{ cat }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="fg" style="margin-bottom:0;">
+          <label class="fl2">Description <span style="color:var(--muted2);text-transform:none;letter-spacing:0;font-size:11px;">— optional</span></label>
+          <input type="text" name="description" value="{{ txn.description or '' }}" class="fi2">
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn-p" style="padding:12px 28px;">Update ✓</button>
+          <a href="{{ url_for('main.dashboard') }}" class="form-back">← Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+function pick(t){
+  document.getElementById('r-i').checked=t==='income';
+  document.getElementById('r-e').checked=t==='expense';
+  document.getElementById('btn-i').className='type-btn'+(t==='income'?' ai':'');
+  document.getElementById('btn-e').className='type-btn'+(t==='expense'?' ae':'');
+}
+</script>
+{% endblock %}
