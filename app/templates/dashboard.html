@@ -1,169 +1,336 @@
 {% extends "base.html" %}
 {% block content %}
-<div style="flex:1;display:grid;grid-template-columns:1.2fr 0.8fr;min-height:calc(100vh - 108px);" class="dash-grid">
+<div class="dg">
+
   <!-- ── LEFT ── -->
-  <div style="padding:56px 60px 40px;border-right:1px solid var(--border);display:flex;flex-direction:column;justify-content:space-between;" class="dash-left">
+  <div class="dl">
     <div>
-      <div style="display:flex;align-items:center;gap:14px;font-family:'Tenor Sans',sans-serif;font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:30px;">
-        <div style="width:24px;height:1px;background:var(--gold);flex-shrink:0;"></div>Financial Overview
-      </div>
-      <h1 style="font-family:'Cormorant Garamond',serif;font-size:72px;font-weight:300;letter-spacing:-0.02em;line-height:0.9;color:var(--text);margin-bottom:14px;" class="dash-title">
-        {{ greeting }},<br><i style="color:var(--gold);">{{ current_user.name.split()[0] }}.</i>
-      </h1>
-      <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;font-style:italic;color:var(--muted);margin-bottom:28px;" class="dash-sub">
-        {{ greeting_sub }}
-      </div>
-      <p style="font-size:14px;font-weight:300;line-height:2;color:var(--muted);max-width:400px;margin-bottom:40px;letter-spacing:0.02em;" class="dash-desc">
-        Your complete financial picture — income, expenses, and net balance — all in one place. Updated in real time.
-      </p>
-      <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap;">
+      <div class="eyebrow"><div class="ey-line"></div>Financial Overview</div>
+      <h1 class="dh1">{{ greeting }},<br><i>{{ current_user.name.split()[0] }}.</i></h1>
+      <div class="dh2">{{ greeting_sub }}</div>
+      <p class="ddesc">Your complete financial picture — income, expenses, and net balance — all in one place, updated in real time.</p>
+      <div class="dacts">
         <a href="{{ url_for('main.add_transaction') }}" class="btn-p">Add Transaction</a>
-        <a href="{{ url_for('main.reports') }}" class="btn-g" style="font-size:10px;">View Reports <span style="display:inline-block;">→</span></a>
+        <a href="{{ url_for('main.reports') }}" class="btn-g">View Reports <span>→</span></a>
       </div>
     </div>
+
     <!-- Stats -->
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);padding-top:28px;border-top:1px solid var(--border);margin-top:48px;" class="dash-stats">
-      <div style="padding-right:24px;border-right:1px solid var(--border);">
-        <div style="font-family:'Tenor Sans',sans-serif;font-size:8.5px;letter-spacing:0.24em;text-transform:uppercase;color:var(--muted2);margin-bottom:10px;">Total Income</div>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;letter-spacing:-0.02em;margin-bottom:5px;color:var(--inc);">₹{{ "%.0f"|format(total_income) }}</div>
-        <div style="font-family:'Tenor Sans',sans-serif;font-size:8.5px;letter-spacing:0.1em;color:var(--muted2);">Across all sources</div>
+    <div class="dstats">
+      <div class="dstat">
+        <div class="dstat-lb">Total Income</div>
+        <div class="dstat-v ci">₹{{ "%.0f"|format(total_income) }}</div>
+        <div class="dstat-s">Across all sources</div>
       </div>
-      <div style="padding:0 24px;border-right:1px solid var(--border);">
-        <div style="font-family:'Tenor Sans',sans-serif;font-size:8.5px;letter-spacing:0.24em;text-transform:uppercase;color:var(--muted2);margin-bottom:10px;">Total Expense</div>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;letter-spacing:-0.02em;margin-bottom:5px;color:var(--exp);">₹{{ "%.0f"|format(total_expense) }}</div>
-        <div style="font-family:'Tenor Sans',sans-serif;font-size:8.5px;letter-spacing:0.1em;color:var(--muted2);">Across all categories</div>
+      <div class="dstat dstat-mid">
+        <div class="dstat-lb">Total Expense</div>
+        <div class="dstat-v ce">₹{{ "%.0f"|format(total_expense) }}</div>
+        <div class="dstat-s">All categories</div>
       </div>
-      <div style="padding-left:24px;">
-        <div style="font-family:'Tenor Sans',sans-serif;font-size:8.5px;letter-spacing:0.24em;text-transform:uppercase;color:var(--muted2);margin-bottom:10px;">Net Balance</div>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;letter-spacing:-0.02em;margin-bottom:5px;color:var(--gold);">₹{{ "%.0f"|format(balance) }}</div>
-        <div style="font-family:'Tenor Sans',sans-serif;font-size:8.5px;letter-spacing:0.1em;color:var(--muted2);">{% if balance >= 0 %}Healthy position{% else %}Needs attention{% endif %}</div>
+      <div class="dstat">
+        <div class="dstat-lb">Net Balance</div>
+        <div class="dstat-v cb">₹{{ "%.0f"|format(balance) }}</div>
+        <div class="dstat-s">{% if balance >= 0 %}Healthy position{% else %}Needs attention{% endif %}</div>
       </div>
     </div>
   </div>
+
   <!-- ── RIGHT ── -->
-  <div style="display:flex;flex-direction:column;" class="dash-right">
+  <div class="dr">
+
+    <!-- ══ WHATSAPP SECTION ══ -->
+    {% if not current_user.whatsapp %}
+    <!-- Not connected -->
+    <div class="wa-wrap">
+      <div class="wa-head">
+        <div class="wa-icon-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.37 5.07L2 22l5.09-1.34A9.93 9.93 0 0012 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm4.89 13.4c-.21.58-1.21 1.12-1.67 1.18-.43.07-.97.1-1.57-.1-.36-.12-.83-.27-1.42-.52-2.5-1.07-4.12-3.58-4.24-3.75-.13-.17-1.07-1.42-1.07-2.7 0-1.3.68-1.93.93-2.2.24-.26.52-.33.7-.33.18 0 .35.01.5.02.16.01.38-.06.6.46l.77 1.9c.07.16.12.33.02.53l-.29.59-.42.46c-.13.14-.28.29-.12.57.16.28.7 1.15 1.5 1.86 1.03.92 1.9 1.2 2.17 1.33.28.14.44.12.61-.07l.84-1c.18-.22.37-.18.62-.1l1.74.82c.24.12.4.17.47.28.07.12.07.63-.14 1.22z" fill="#25D366"/>
+          </svg>
+        </div>
+        <div>
+          <div class="wa-title">Connect WhatsApp</div>
+          <div class="wa-sub">Log transactions by sending a simple message — anytime, anywhere.</div>
+        </div>
+      </div>
+
+      <!-- How it works -->
+      <div class="wa-how">
+        <div class="wa-step"><span class="wa-num">1</span><span>Enter your WhatsApp number below</span></div>
+        <div class="wa-step"><span class="wa-num">2</span><span>Say <strong>Hi</strong> to the Ledgr bot on WhatsApp</span></div>
+        <div class="wa-step"><span class="wa-num">3</span><span>Send <em>r 5000 salary</em> or <em>s 300 food</em> to log instantly</span></div>
+      </div>
+
+      <!-- Example messages -->
+      <div class="wa-examples">
+        <div class="wa-ex-label">What you can send:</div>
+        <div class="wa-chips">
+          <span class="chip chip-i">r 20000 salary</span>
+          <span class="chip chip-e">s 500 food</span>
+          <span class="chip chip-i">freelance r 8000</span>
+          <span class="chip chip-e">petrol 300 s</span>
+          <span class="chip chip-n">b → balance</span>
+          <span class="chip chip-n">aaj → today</span>
+        </div>
+      </div>
+
+      <!-- Form -->
+      <form method="POST" action="{{ url_for('main.connect_whatsapp') }}" class="wa-form">
+        <div class="wa-input-row">
+          <div class="wa-input-box">
+            <span class="wa-pfx">+91</span>
+            <input type="tel" name="whatsapp_number" placeholder="98765 43210"
+              maxlength="10" pattern="[0-9]{10}" required class="wa-inp">
+          </div>
+          <button type="submit" class="wa-btn">Register →</button>
+        </div>
+      </form>
+      <div class="wa-note">Your number is used only to receive your own WhatsApp messages. Never shared.</div>
+    </div>
+
+    {% else %}
+    <!-- Connected -->
+    <div class="wa-connected">
+      <div class="wa-conn-info">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.37 5.07L2 22l5.09-1.34A9.93 9.93 0 0012 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm4.89 13.4c-.21.58-1.21 1.12-1.67 1.18-.43.07-.97.1-1.57-.1-.36-.12-.83-.27-1.42-.52-2.5-1.07-4.12-3.58-4.24-3.75-.13-.17-1.07-1.42-1.07-2.7 0-1.3.68-1.93.93-2.2.24-.26.52-.33.7-.33.18 0 .35.01.5.02.16.01.38-.06.6.46l.77 1.9c.07.16.12.33.02.53l-.29.59-.42.46c-.13.14-.28.29-.12.57.16.28.7 1.15 1.5 1.86 1.03.92 1.9 1.2 2.17 1.33.28.14.44.12.61-.07l.84-1c.18-.22.37-.18.62-.1l1.74.82c.24.12.4.17.47.28.07.12.07.63-.14 1.22z" fill="#25D366"/>
+        </svg>
+        <div>
+          <div class="wa-conn-title">WhatsApp Connected</div>
+          <div class="wa-conn-hint">Send <strong>h</strong> to your bot for the full command list</div>
+        </div>
+      </div>
+      <a href="{{ url_for('main.disconnect_whatsapp') }}" class="wa-change">Change</a>
+    </div>
+
     <!-- Card -->
-    <div style="padding:32px 40px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:center;align-items:center;flex-shrink:0;">
-      <div style="perspective:1400px;width:100%;">
-        <div id="c3d" style="width:100%;max-width:320px;height:190px;transform-style:preserve-3d;transition:transform 0.07s ease-out;cursor:pointer;position:relative;margin:0 auto;">
-          <div style="position:absolute;inset:0;border-radius:14px;background:linear-gradient(145deg,var(--card-bg),rgba(255,255,255,0.01));border:1px solid var(--card-border);padding:22px 26px;overflow:hidden;" id="cface">
-            <div id="cshine" style="position:absolute;inset:0;border-radius:14px;pointer-events:none;background:radial-gradient(ellipse 110px 75px at 50% 30%,rgba(196,163,90,0.12),transparent);"></div>
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;position:relative;z-index:1;">
-              <div style="font-family:'Tenor Sans',sans-serif;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);">Ledgr · Personal</div>
-              <div style="width:28px;height:19px;border-radius:3px;background:linear-gradient(135deg,var(--gold),var(--gold2));opacity:0.65;"></div>
+    <div class="card-area">
+      <div class="card-scene">
+        <div id="c3d" class="card3d">
+          <div class="card-face" id="cface">
+            <div id="cshine" class="card-shine"></div>
+            <div class="card-top">
+              <span class="card-brand">Ledgr · Personal</span>
+              <div class="card-chip"></div>
             </div>
-            <div style="position:relative;z-index:1;margin-bottom:14px;">
-              <div style="font-family:'Tenor Sans',sans-serif;font-size:8px;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted2);margin-bottom:4px;">Account Holder</div>
-              <div style="font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:300;letter-spacing:0.1em;color:var(--text);">{{ current_user.name }}</div>
+            <div class="card-holder-row">
+              <div class="card-hl">Account Holder</div>
+              <div class="card-hn">{{ current_user.name }}</div>
             </div>
-            <div style="position:relative;z-index:1;">
-              <div style="font-family:'Tenor Sans',sans-serif;font-size:8px;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted2);margin-bottom:4px;">Net Balance</div>
-              <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;letter-spacing:-0.02em;color:var(--gold);">₹{{ "%.0f"|format(balance) }}</div>
+            <div class="card-bal-row">
+              <div class="card-bl">Net Balance</div>
+              <div class="card-bv">₹{{ "%.0f"|format(balance) }}</div>
             </div>
-            <div style="position:absolute;bottom:16px;right:20px;display:flex;z-index:1;">
-              <div style="width:20px;height:20px;border-radius:50%;background:rgba(196,163,90,0.45);"></div>
-              <div style="width:20px;height:20px;border-radius:50%;background:rgba(196,163,90,0.22);margin-left:-8px;"></div>
-            </div>
+            <div class="card-dots"><div class="cd cd1"></div><div class="cd cd2"></div></div>
           </div>
         </div>
       </div>
     </div>
-    <!-- Transactions -->
-    <div style="flex:1;overflow-y:auto;padding:0 40px 20px;" class="txn-scroll">
-      <div id="txnhead" style="display:flex;align-items:center;justify-content:space-between;padding:18px 0 14px;border-bottom:1px solid var(--border);position:sticky;top:0;backdrop-filter:blur(12px);z-index:1;">
-        <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;letter-spacing:0.03em;color:var(--text);">Recent Activity</div>
-        <span style="font-family:'Tenor Sans',sans-serif;font-size:8.5px;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);">{{ transactions|length }} Entries</span>
+    {% endif %}
+
+    <!-- ── TRANSACTIONS ── -->
+    <div class="txn-area">
+      <div class="txn-head" id="txnHead">
+        <div class="txn-title">Recent Activity</div>
+        <span class="txn-count">{{ transactions|length }} Entries</span>
       </div>
       {% if transactions %}
         {% for txn in transactions %}
-        <div class="txn-item" style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.04);transition:padding 0.2s;cursor:default;"
-          onmouseover="this.style.paddingLeft='10px'" onmouseout="this.style.paddingLeft='0'">
-          <div style="display:flex;align-items:center;gap:14px;">
-            <div style="width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:300;flex-shrink:0;
-              {% if txn.type=='income' %}background:rgba(125,211,168,0.08);border:1px solid rgba(125,211,168,0.15);color:var(--inc);
-              {% else %}background:rgba(232,160,160,0.08);border:1px solid rgba(232,160,160,0.15);color:var(--exp);{% endif %}">
+        <div class="txr txn-item"
+          onmouseover="this.style.paddingLeft='8px'" onmouseout="this.style.paddingLeft='0'">
+          <div class="txr-l">
+            <div class="txr-ico {% if txn.type=='income' %}ico-i{% else %}ico-e{% endif %}">
               {% if txn.type=='income' %}↑{% else %}↓{% endif %}
             </div>
             <div>
-              <div style="font-size:13px;font-weight:300;color:var(--text);margin-bottom:3px;letter-spacing:0.01em;">{{ txn.description or txn.category }}</div>
-              <div style="font-family:'Tenor Sans',sans-serif;font-size:8.5px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);">{{ txn.category }} · {{ txn.date.strftime('%d %b, %I:%M %p') }}</div>
+              <div class="txr-name">{{ txn.description or txn.category }}</div>
+              <div class="txr-meta">{{ txn.category }} · {{ txn.date.strftime('%d %b') }}</div>
             </div>
           </div>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;">
-            <div style="font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:400;letter-spacing:-0.01em;color:{% if txn.type=='income' %}var(--inc){% else %}var(--exp){% endif %};">
+          <div class="txr-r">
+            <div class="txr-amt {% if txn.type=='income' %}ci{% else %}ce{% endif %}">
               {% if txn.type=='income' %}+{% else %}-{% endif %}₹{{ "%.0f"|format(txn.amount) }}
             </div>
-            <div style="display:flex;align-items:center;gap:10px;">
-              <span style="font-family:'Tenor Sans',sans-serif;font-size:7.5px;letter-spacing:0.12em;text-transform:uppercase;padding:2px 7px;border-radius:1px;
-                {% if txn.type=='income' %}background:rgba(125,211,168,0.07);color:rgba(125,211,168,0.7);border:1px solid rgba(125,211,168,0.14);
-                {% else %}background:rgba(232,160,160,0.07);color:rgba(232,160,160,0.7);border:1px solid rgba(232,160,160,0.14);{% endif %}">
-                {{ txn.type }}
-              </span>
-              <a href="{{ url_for('main.delete_transaction', id=txn.id) }}" onclick="return confirm('Remove this transaction?')"
-                style="font-family:'Tenor Sans',sans-serif;font-size:10px;color:var(--muted2);text-decoration:none;transition:color 0.2s;"
-                onmouseover="this.style.color='var(--exp)'" onmouseout="this.style.color='var(--muted2)'">✕</a>
-                <a href="{{ url_for('main.edit_transaction', id=txn.id) }}"
-  style="font-family:'Tenor Sans',sans-serif;font-size:9px;color:var(--muted2);text-decoration:none;transition:color 0.2s;margin-right:4px;"
-  onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--muted2)'">✎</a>
-
+            <div class="txr-actions">
+              <span class="txr-tag {% if txn.type=='income' %}tag-i{% else %}tag-e{% endif %}">{{ txn.type }}</span>
+              <a href="{{ url_for('main.edit_transaction', id=txn.id) }}" class="txr-btn txr-edit">✎</a>
+              <a href="{{ url_for('main.delete_transaction', id=txn.id) }}" onclick="return confirm('Remove?')" class="txr-btn txr-del">✕</a>
             </div>
           </div>
         </div>
         {% endfor %}
       {% else %}
-        <div style="text-align:center;padding:56px 20px;">
-          <div style="font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:200;font-style:italic;color:var(--muted);margin-bottom:12px;">Nothing here yet.</div>
-          <div style="font-family:'Tenor Sans',sans-serif;font-size:8.5px;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted2);margin-bottom:24px;">Your financial story begins with the first entry.</div>
-          <a href="{{ url_for('main.add_transaction') }}" class="btn-p">Add Your First Entry</a>
+        <div class="txn-empty">
+          <div class="txn-empty-title">Nothing here yet.</div>
+          <div class="txn-empty-sub">Your financial story begins with the first entry.</div>
+          <a href="{{ url_for('main.add_transaction') }}" class="btn-p" style="margin-top:20px;">Add Your First Entry</a>
         </div>
       {% endif %}
     </div>
+
   </div>
 </div>
 
 <style>
+/* ── GRID ── */
+.dg{flex:1;display:grid;grid-template-columns:1.2fr 0.8fr;min-height:calc(100vh - 104px);}
+.dl{padding:56px 60px 40px;border-right:1px solid var(--border);display:flex;flex-direction:column;justify-content:space-between;}
+.dr{display:flex;flex-direction:column;overflow-y:auto;}
+
+/* Left content */
+.eyebrow{display:flex;align-items:center;gap:12px;font-family:'Tenor Sans',sans-serif;font-size:9.5px;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:28px;}
+.ey-line{width:22px;height:1px;background:var(--gold);flex-shrink:0;}
+.dh1{font-family:'Cormorant Garamond',serif;font-size:70px;font-weight:300;letter-spacing:-0.02em;line-height:0.9;color:var(--text);margin-bottom:14px;}
+.dh1 i{font-style:italic;color:var(--gold);}
+.dh2{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;font-style:italic;color:var(--muted);margin-bottom:26px;}
+.ddesc{font-size:13.5px;font-weight:300;line-height:2.05;color:var(--muted);max-width:400px;margin-bottom:38px;letter-spacing:0.02em;}
+.dacts{display:flex;align-items:center;gap:24px;flex-wrap:wrap;}
+.dstats{display:grid;grid-template-columns:repeat(3,1fr);padding-top:28px;border-top:1px solid var(--border);margin-top:48px;}
+.dstat{padding-right:22px;border-right:1px solid var(--border);}
+.dstat-mid{padding:0 22px;}
+.dstats .dstat:last-child{border-right:none;padding-right:0;padding-left:22px;}
+.dstat-lb{font-family:'Tenor Sans',sans-serif;font-size:8.5px;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted2);margin-bottom:10px;}
+.dstat-v{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:400;letter-spacing:-0.02em;margin-bottom:5px;}
+.dstat-s{font-family:'Tenor Sans',sans-serif;font-size:8.5px;letter-spacing:0.1em;color:var(--muted2);}
+
+/* ── WHATSAPP ── */
+.wa-wrap{margin:24px;background:var(--card-bg);border:1px solid var(--wa-border);border-radius:16px;padding:22px;position:relative;overflow:hidden;flex-shrink:0;}
+.wa-wrap::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#25D366,rgba(37,211,102,0.15));border-radius:16px 16px 0 0;}
+.wa-head{display:flex;align-items:center;gap:13px;margin-bottom:18px;}
+.wa-icon-wrap{width:40px;height:40px;border-radius:10px;background:var(--wa-bg);border:1px solid var(--wa-border);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.wa-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:300;color:var(--text);margin-bottom:2px;}
+.wa-sub{font-size:12px;font-weight:300;color:var(--muted);line-height:1.5;}
+.wa-how{display:flex;flex-direction:column;gap:9px;margin-bottom:16px;}
+.wa-step{display:flex;align-items:center;gap:11px;font-size:12px;font-weight:300;color:var(--muted);line-height:1.5;}
+.wa-step strong{color:var(--text);}
+.wa-step em{color:var(--gold);font-style:normal;font-family:'Jost',sans-serif;}
+.wa-num{width:20px;height:20px;border-radius:50%;background:var(--wa-bg);border:1px solid var(--wa-border);color:#25D366;font-size:9px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Tenor Sans',sans-serif;}
+.wa-examples{margin-bottom:16px;}
+.wa-ex-label{font-family:'Tenor Sans',sans-serif;font-size:8px;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted2);margin-bottom:8px;}
+.wa-chips{display:flex;flex-wrap:wrap;gap:6px;}
+.chip{font-family:'Jost',sans-serif;font-size:11px;font-weight:300;padding:4px 10px;border-radius:100px;}
+.chip-i{background:rgba(110,207,160,0.08);color:var(--inc);border:1px solid rgba(110,207,160,0.18);}
+.chip-e{background:rgba(232,144,144,0.08);color:var(--exp);border:1px solid rgba(232,144,144,0.18);}
+.chip-n{background:var(--gold-dim);color:var(--gold);border:1px solid var(--border2);}
+.wa-form{margin-bottom:10px;}
+.wa-input-row{display:flex;gap:9px;flex-wrap:wrap;}
+.wa-input-box{display:flex;align-items:center;flex:1;min-width:160px;background:rgba(255,255,255,0.04);border:1px solid var(--border2);border-radius:4px;transition:border-color 0.25s;}
+.light .wa-input-box{background:rgba(255,255,255,0.75);}
+.wa-input-box:focus-within{border-color:#25D366;}
+.wa-pfx{font-family:'Jost',sans-serif;font-size:13px;font-weight:300;color:var(--muted);padding:0 10px;border-right:1px solid var(--border2);white-space:nowrap;}
+.wa-inp{flex:1;padding:10px 12px;background:transparent;border:none;outline:none;font-family:'Jost',sans-serif;font-size:13px;font-weight:300;color:var(--text);}
+.wa-inp::placeholder{color:var(--muted2);}
+.wa-btn{padding:10px 18px;background:linear-gradient(135deg,#25D366,#128C7E);color:#fff;font-family:'Tenor Sans',sans-serif;font-size:9px;letter-spacing:0.16em;text-transform:uppercase;border:none;border-radius:4px;cursor:pointer;transition:all 0.3s;white-space:nowrap;}
+.wa-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(37,211,102,0.22);}
+.wa-note{font-size:10.5px;color:var(--muted2);line-height:1.5;}
+
+/* Connected bar */
+.wa-connected{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;border-bottom:1px solid var(--border);background:rgba(37,211,102,0.04);flex-shrink:0;}
+.wa-conn-info{display:flex;align-items:center;gap:10px;}
+.wa-conn-title{font-family:'Tenor Sans',sans-serif;font-size:9px;letter-spacing:0.16em;text-transform:uppercase;color:#25D366;margin-bottom:2px;}
+.wa-conn-hint{font-size:11.5px;font-weight:300;color:var(--muted);}
+.wa-conn-hint strong{color:var(--text);}
+.wa-change{font-family:'Tenor Sans',sans-serif;font-size:8px;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted2);text-decoration:none;transition:color 0.2s;}
+.wa-change:hover{color:var(--exp);}
+
+/* Card */
+.card-area{padding:24px 28px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:center;flex-shrink:0;}
+.card-scene{perspective:1400px;width:100%;}
+.card3d{width:100%;max-width:300px;height:178px;transform-style:preserve-3d;transition:transform 0.07s ease-out;cursor:pointer;position:relative;margin:0 auto;}
+.card-face{position:absolute;inset:0;border-radius:14px;background:linear-gradient(145deg,var(--card-bg),rgba(255,255,255,0.01));border:1px solid var(--card-border);padding:20px 24px;overflow:hidden;}
+.dark .card-face{box-shadow:0 24px 60px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.05);}
+.light .card-face{box-shadow:0 16px 48px rgba(28,63,110,0.1),inset 0 1px 0 rgba(255,255,255,0.95);}
+.card-shine{position:absolute;inset:0;border-radius:14px;pointer-events:none;background:radial-gradient(ellipse 100px 70px at 50% 30%,rgba(196,163,90,0.12),transparent);}
+.card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;position:relative;z-index:1;}
+.card-brand{font-family:'Tenor Sans',sans-serif;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);}
+.card-chip{width:26px;height:18px;border-radius:3px;background:linear-gradient(135deg,var(--gold),var(--gold2));opacity:0.6;}
+.card-holder-row{position:relative;z-index:1;margin-bottom:12px;}
+.card-hl{font-family:'Tenor Sans',sans-serif;font-size:7.5px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted2);margin-bottom:3px;}
+.card-hn{font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:300;letter-spacing:0.1em;color:var(--text);}
+.card-bal-row{position:relative;z-index:1;}
+.card-bl{font-family:'Tenor Sans',sans-serif;font-size:7.5px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted2);margin-bottom:3px;}
+.card-bv{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;letter-spacing:-0.02em;color:var(--gold);}
+.card-dots{position:absolute;bottom:15px;right:18px;display:flex;z-index:1;}
+.cd{width:18px;height:18px;border-radius:50%;}
+.cd1{background:rgba(196,163,90,0.45);}
+.cd2{background:rgba(196,163,90,0.22);margin-left:-7px;}
+
+/* Transactions */
+.txn-area{flex:1;overflow-y:auto;padding:0 28px 20px;}
+.txn-area::-webkit-scrollbar{width:0;}
+.txn-head{display:flex;align-items:center;justify-content:space-between;padding:16px 0 13px;border-bottom:1px solid var(--border);position:sticky;top:0;backdrop-filter:blur(16px);z-index:1;}
+.txn-title{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:300;letter-spacing:0.03em;color:var(--text);}
+.txn-count{font-family:'Tenor Sans',sans-serif;font-size:8.5px;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);}
+.txr{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.04);transition:padding 0.2s;cursor:default;}
+.txr:last-child{border-bottom:none;}
+.txr-l{display:flex;align-items:center;gap:12px;}
+.txr-ico{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:300;flex-shrink:0;}
+.ico-i{background:rgba(110,207,160,0.08);border:1px solid rgba(110,207,160,0.15);color:var(--inc);}
+.ico-e{background:rgba(232,144,144,0.08);border:1px solid rgba(232,144,144,0.15);color:var(--exp);}
+.txr-name{font-size:13px;font-weight:300;color:var(--text);margin-bottom:2px;}
+.txr-meta{font-family:'Tenor Sans',sans-serif;font-size:8px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);}
+.txr-r{display:flex;flex-direction:column;align-items:flex-end;gap:5px;}
+.txr-amt{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:400;letter-spacing:-0.01em;}
+.txr-actions{display:flex;align-items:center;gap:8px;}
+.txr-tag{font-family:'Tenor Sans',sans-serif;font-size:7.5px;letter-spacing:0.1em;text-transform:uppercase;padding:2px 7px;border-radius:1px;}
+.tag-i{background:rgba(110,207,160,0.07);color:rgba(110,207,160,0.7);border:1px solid rgba(110,207,160,0.14);}
+.tag-e{background:rgba(232,144,144,0.07);color:rgba(232,144,144,0.7);border:1px solid rgba(232,144,144,0.14);}
+.txr-btn{font-size:11px;color:var(--muted2);text-decoration:none;transition:color 0.2s;background:none;border:none;cursor:pointer;}
+.txr-edit:hover{color:var(--gold);}
+.txr-del:hover{color:var(--exp);}
+.txn-empty{text-align:center;padding:52px 20px;display:flex;flex-direction:column;align-items:center;}
+.txn-empty-title{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:200;font-style:italic;color:var(--muted);margin-bottom:10px;}
+.txn-empty-sub{font-family:'Tenor Sans',sans-serif;font-size:8.5px;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted2);}
+
+/* Mobile */
 @media(max-width:900px){
-  .dash-grid{grid-template-columns:1fr!important;}
-  .dash-right{border-top:1px solid var(--border);}
-  .dash-left{padding:36px 24px 28px!important;}
-  .dash-title{font-size:52px!important;}
-  .dash-sub{font-size:18px!important;}
-  .dash-desc{display:none;}
-  .dash-stats{margin-top:28px!important;}
+  .dg{grid-template-columns:1fr!important;}
+  .dr{border-top:1px solid var(--border);}
+  .dl{padding:32px 20px 24px!important;}
+  .dh1{font-size:48px!important;}
+  .dh2{font-size:18px!important;}
+  .ddesc{display:none;}
+  .dstats{margin-top:24px!important;}
 }
 @media(max-width:600px){
-  .dash-left{padding:28px 20px 24px!important;}
-  .dash-title{font-size:42px!important;}
-  .dash-right div[style*="padding:32px"]{padding:20px!important;}
-  .txn-scroll{padding:0 20px 16px!important;}
-  .dash-stats{grid-template-columns:1fr!important;gap:16px;}
-  .dash-stats>div{border-right:none!important;border-bottom:1px solid var(--border);padding:0 0 16px!important;}
-  .dash-stats>div:last-child{border-bottom:none;}
+  .dl{padding:24px 16px 20px!important;}
+  .dh1{font-size:38px!important;}
+  .txn-area{padding:0 16px 16px!important;}
+  .wa-wrap{margin:16px!important;}
+  .dstats{grid-template-columns:1fr!important;gap:14px;}
+  .dstat{border-right:none!important;border-bottom:1px solid var(--border);padding-right:0!important;padding-bottom:14px!important;}
+  .dstat-mid{padding:0!important;}
+  .dstats .dstat:last-child{padding-left:0!important;border-bottom:none;padding-bottom:0!important;}
+  .wa-input-row{flex-direction:column;}
+  .wa-btn{width:100%;}
 }
 </style>
 
 <script>
-const c=document.getElementById('c3d'),sh=document.getElementById('cshine'),sc=c.parentElement;
-sc.addEventListener('mousemove',e=>{
-  const r=sc.getBoundingClientRect(),mx=(e.clientX-r.left)/r.width-0.5,my=(e.clientY-r.top)/r.height-0.5;
-  c.style.transform=`rotateY(${mx*22}deg) rotateX(${-my*16}deg) translateZ(18px)`;
-  sh.style.background=`radial-gradient(ellipse 110px 75px at ${(mx+0.5)*100}% ${(my+0.5)*100}%,rgba(196,163,90,0.14),transparent)`;
-});
-sc.addEventListener('mouseleave',()=>{
-  c.style.transition='transform 0.7s cubic-bezier(0.4,0,0.2,1)';
-  c.style.transform='rotateY(0) rotateX(0) translateZ(0)';
-  setTimeout(()=>c.style.transition='transform 0.07s ease-out',700);
-});
-const th=document.getElementById('txnhead'),root=document.getElementById('root');
-function fixHead(){th.style.background=root.classList.contains('light')?'rgba(238,234,224,0.96)':'rgba(6,6,10,0.92)';}
-fixHead();
-new MutationObserver(fixHead).observe(root,{attributes:true,attributeFilter:['class']});
-function fixTxn(){
-  document.querySelectorAll('.txn-item').forEach(el=>{
-    el.style.borderBottomColor=root.classList.contains('light')?'rgba(17,17,24,0.07)':'rgba(255,255,255,0.04)';
+// Card tilt
+const c3=document.getElementById('c3d');
+if(c3){
+  const sh=document.getElementById('cshine'),sc=c3.parentElement;
+  sc.addEventListener('mousemove',e=>{
+    const r=sc.getBoundingClientRect(),mx=(e.clientX-r.left)/r.width-0.5,my=(e.clientY-r.top)/r.height-0.5;
+    c3.style.transform=`rotateY(${mx*22}deg) rotateX(${-my*16}deg) translateZ(18px)`;
+    if(sh) sh.style.background=`radial-gradient(ellipse 100px 70px at ${(mx+0.5)*100}% ${(my+0.5)*100}%,rgba(196,163,90,0.14),transparent)`;
+  });
+  sc.addEventListener('mouseleave',()=>{
+    c3.style.transition='transform 0.7s cubic-bezier(0.4,0,0.2,1)';
+    c3.style.transform='rotateY(0) rotateX(0) translateZ(0)';
+    setTimeout(()=>c3.style.transition='transform 0.07s ease-out',700);
   });
 }
-fixTxn();
-new MutationObserver(fixTxn).observe(root,{attributes:true,attributeFilter:['class']});
+// Theme-aware txn head
+const th=document.getElementById('txnHead'),root=document.getElementById('root');
+function fixUI(){
+  if(th) th.style.background=root.classList.contains('light')?'rgba(237,232,220,0.96)':'rgba(6,6,10,0.92)';
+  document.querySelectorAll('.txr').forEach(el=>{
+    el.style.borderBottomColor=root.classList.contains('light')?'rgba(14,14,24,0.07)':'rgba(255,255,255,0.04)';
+  });
+}
+fixUI();
+new MutationObserver(fixUI).observe(root,{attributes:true,attributeFilter:['class']});
 </script>
 {% endblock %}

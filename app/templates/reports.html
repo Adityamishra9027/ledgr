@@ -1,74 +1,70 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="reports-wrap">
+<div class="rp-wrap">
 
-  <!-- Header -->
-  <div class="reports-header">
-    <div class="r-eyebrow"><div class="r-line"></div>Financial Reports</div>
-    <h1 class="r-title">Your <i>Overview.</i></h1>
-    <p class="r-sub">A complete picture of your financial activity.</p>
+  <div class="rp-header">
+    <div class="rp-eyebrow"><div class="rp-line"></div>Financial Reports</div>
+    <h1 class="rp-title">Your <i>Overview.</i></h1>
+    <p class="rp-sub">A complete picture of your financial activity.</p>
   </div>
 
-  <!-- Summary Cards -->
-  <div class="r-cards">
-    <div class="r-card r-card-inc">
-      <div class="r-card-top"></div>
-      <div class="r-card-label">Total Income</div>
-      <div class="r-card-val" style="color:var(--inc);">₹{{ "%.0f"|format(total_income) }}</div>
-      <div class="r-card-sub">All sources combined</div>
+  <!-- Summary cards -->
+  <div class="rp-cards">
+    <div class="rp-card">
+      <div class="rp-card-bar" style="background:linear-gradient(90deg,var(--inc),transparent);"></div>
+      <div class="rp-card-lb">Total Income</div>
+      <div class="rp-card-val ci">₹{{ "%.0f"|format(total_income) }}</div>
+      <div class="rp-card-sub">All sources</div>
     </div>
-    <div class="r-card r-card-exp">
-      <div class="r-card-top"></div>
-      <div class="r-card-label">Total Expense</div>
-      <div class="r-card-val" style="color:var(--exp);">₹{{ "%.0f"|format(total_expense) }}</div>
-      <div class="r-card-sub">All categories</div>
+    <div class="rp-card">
+      <div class="rp-card-bar" style="background:linear-gradient(90deg,var(--exp),transparent);"></div>
+      <div class="rp-card-lb">Total Expense</div>
+      <div class="rp-card-val ce">₹{{ "%.0f"|format(total_expense) }}</div>
+      <div class="rp-card-sub">All categories</div>
     </div>
-    <div class="r-card r-card-bal">
-      <div class="r-card-top"></div>
-      <div class="r-card-label">Net Balance</div>
-      <div class="r-card-val" style="color:var(--gold);">₹{{ "%.0f"|format(balance) }}</div>
-      <div class="r-card-sub">{% if balance >= 0 %}Healthy position{% else %}Needs attention{% endif %}</div>
+    <div class="rp-card">
+      <div class="rp-card-bar" style="background:linear-gradient(90deg,var(--gold),transparent);"></div>
+      <div class="rp-card-lb">Net Balance</div>
+      <div class="rp-card-val cb">₹{{ "%.0f"|format(balance) }}</div>
+      <div class="rp-card-sub">{% if balance >= 0 %}Healthy position{% else %}Needs attention{% endif %}</div>
     </div>
   </div>
 
   <!-- Charts -->
-  <div class="r-charts">
-    <!-- Bar Chart -->
-    <div class="r-chart-card">
-      <div class="r-chart-label">Monthly Overview</div>
-      <div class="r-chart-title">Income vs Expense</div>
-      <div class="r-chart-wrap">
-        <canvas id="barChart"></canvas>
-      </div>
+  <div class="rp-charts">
+    <div class="rp-chart-card">
+      <div class="rp-chart-lb">Monthly Overview</div>
+      <div class="rp-chart-title">Income vs Expense</div>
+      <div class="rp-chart-box"><canvas id="barChart"></canvas></div>
     </div>
-    <!-- Pie Chart -->
-    <div class="r-chart-card">
-      <div class="r-chart-label">Spending Breakdown</div>
-      <div class="r-chart-title">By Category</div>
-      <div class="r-chart-wrap">
+    <div class="rp-chart-card">
+      <div class="rp-chart-lb">Spending Breakdown</div>
+      <div class="rp-chart-title">By Category</div>
+      <div class="rp-chart-box">
         {% if categories %}
           <canvas id="pieChart"></canvas>
         {% else %}
-          <div class="r-empty">No expense data yet.</div>
+          <div class="rp-empty">No expense data yet.</div>
         {% endif %}
       </div>
     </div>
   </div>
 
-  <!-- Category Table -->
+  <!-- Category table -->
   {% if categories %}
-  <div class="r-table-card">
-    <div class="r-chart-label">Expense Breakdown</div>
-    <div class="r-chart-title" style="margin-bottom:20px;">By Category</div>
-    <div class="r-divider"></div>
+  <div class="rp-table">
+    <div class="rp-chart-lb">Category Breakdown</div>
+    <div class="rp-chart-title" style="margin-bottom:18px;">Expense Detail</div>
+    <div class="rp-divider"></div>
     {% for cat in categories %}
-    <div class="r-cat-row">
-      <div class="r-cat-name">{{ cat.category }}</div>
-      <div class="r-cat-right">
-        <div class="r-cat-bar">
-          <div class="r-cat-fill" style="width:{{ ((cat.total / total_expense) * 100)|int if total_expense > 0 else 0 }}%;"></div>
+    <div class="rp-cat-row cat-item">
+      <div class="rp-cat-name">{{ cat.category }}</div>
+      <div class="rp-cat-right">
+        <div class="rp-cat-bar-wrap">
+          <div class="rp-cat-fill" style="width:{{ ((cat.total / total_expense) * 100)|int if total_expense > 0 else 0 }}%;"></div>
         </div>
-        <div class="r-cat-amt">₹{{ "%.0f"|format(cat.total) }}</div>
+        <div class="rp-cat-pct">{{ ((cat.total / total_expense) * 100)|int if total_expense > 0 else 0 }}%</div>
+        <div class="rp-cat-amt ce">₹{{ "%.0f"|format(cat.total) }}</div>
       </div>
     </div>
     {% endfor %}
@@ -78,125 +74,127 @@
 </div>
 
 <style>
-.reports-wrap{flex:1;padding:48px 60px;max-width:1100px;margin:0 auto;width:100%;}
-.reports-header{margin-bottom:36px;}
-.r-eyebrow{display:flex;align-items:center;gap:12px;font-family:'Tenor Sans',sans-serif;font-size:9px;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;}
-.r-line{width:20px;height:1px;background:var(--gold);flex-shrink:0;}
-.r-title{font-family:'Cormorant Garamond',serif;font-size:56px;font-weight:300;letter-spacing:-0.02em;line-height:0.95;color:var(--text);margin-bottom:10px;}
-.r-title i{color:var(--gold);}
-.r-sub{font-size:14px;font-weight:300;color:var(--muted);letter-spacing:0.02em;}
-.r-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px;}
-.r-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:16px;padding:24px;position:relative;overflow:hidden;transition:transform 0.2s;}
-.r-card:hover{transform:translateY(-2px);}
-.r-card-top{position:absolute;top:0;left:0;right:0;height:2px;border-radius:16px 16px 0 0;}
-.r-card-inc .r-card-top{background:linear-gradient(90deg,var(--inc),transparent);}
-.r-card-exp .r-card-top{background:linear-gradient(90deg,var(--exp),transparent);}
-.r-card-bal .r-card-top{background:linear-gradient(90deg,var(--gold),transparent);}
-.r-card-label{font-family:'Tenor Sans',sans-serif;font-size:8px;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted2);margin-bottom:10px;}
-.r-card-val{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:400;letter-spacing:-0.02em;margin-bottom:6px;}
-.r-card-sub{font-family:'Tenor Sans',sans-serif;font-size:8px;letter-spacing:0.1em;color:var(--muted2);}
-.r-charts{display:grid;grid-template-columns:1.4fr 1fr;gap:16px;margin-bottom:24px;}
-.r-chart-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:16px;padding:24px;}
-.r-chart-label{font-family:'Tenor Sans',sans-serif;font-size:8px;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted2);margin-bottom:6px;}
-.r-chart-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;color:var(--text);margin-bottom:20px;}
-.r-chart-wrap{position:relative;width:100%;height:220px;}
-.r-chart-wrap canvas{width:100%!important;height:100%!important;}
-.r-empty{display:flex;align-items:center;justify-content:center;height:180px;font-family:'Cormorant Garamond',serif;font-size:20px;font-style:italic;color:var(--muted);}
-.r-table-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:16px;padding:24px;}
-.r-divider{height:1px;background:var(--border);margin-bottom:16px;}
-.r-cat-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid rgba(255,255,255,0.03);}
-.light .r-cat-row{border-bottom-color:rgba(17,17,24,0.06);}
-.r-cat-row:last-child{border-bottom:none;}
-.r-cat-name{font-size:13px;font-weight:300;color:var(--text);}
-.r-cat-right{display:flex;align-items:center;gap:16px;}
-.r-cat-bar{width:100px;height:3px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;}
-.light .r-cat-bar{background:rgba(17,17,24,0.08);}
-.r-cat-fill{height:100%;background:var(--exp);border-radius:2px;}
-.r-cat-amt{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:400;color:var(--exp);min-width:80px;text-align:right;}
+.rp-wrap{flex:1;padding:52px 60px;max-width:1100px;margin:0 auto;width:100%;}
+.rp-header{margin-bottom:36px;}
+.rp-eyebrow{display:flex;align-items:center;gap:12px;font-family:'Tenor Sans',sans-serif;font-size:9.5px;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;}
+.rp-line{width:20px;height:1px;background:var(--gold);flex-shrink:0;}
+.rp-title{font-family:'Cormorant Garamond',serif;font-size:56px;font-weight:300;letter-spacing:-0.02em;line-height:0.95;color:var(--text);margin-bottom:10px;}
+.rp-title i{color:var(--gold);}
+.rp-sub{font-size:13.5px;font-weight:300;color:var(--muted);letter-spacing:0.02em;}
 
-/* ── MOBILE ── */
+/* Cards */
+.rp-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;}
+.rp-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:16px;padding:22px;position:relative;overflow:hidden;transition:transform 0.2s;}
+.rp-card:hover{transform:translateY(-2px);}
+.rp-card-bar{position:absolute;top:0;left:0;right:0;height:2px;border-radius:16px 16px 0 0;}
+.rp-card-lb{font-family:'Tenor Sans',sans-serif;font-size:8.5px;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted2);margin-bottom:10px;}
+.rp-card-val{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:400;letter-spacing:-0.02em;margin-bottom:5px;}
+.rp-card-sub{font-family:'Tenor Sans',sans-serif;font-size:8.5px;letter-spacing:0.1em;color:var(--muted2);}
+
+/* Charts */
+.rp-charts{display:grid;grid-template-columns:1.4fr 1fr;gap:16px;margin-bottom:20px;}
+.rp-chart-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:16px;padding:24px;}
+.rp-chart-lb{font-family:'Tenor Sans',sans-serif;font-size:8.5px;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted2);margin-bottom:5px;}
+.rp-chart-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;color:var(--text);margin-bottom:18px;}
+.rp-chart-box{position:relative;width:100%;height:220px;}
+.rp-chart-box canvas{width:100%!important;height:100%!important;}
+.rp-empty{display:flex;align-items:center;justify-content:center;height:180px;font-family:'Cormorant Garamond',serif;font-size:20px;font-style:italic;color:var(--muted);}
+
+/* Table */
+.rp-table{background:var(--card-bg);border:1px solid var(--card-border);border-radius:16px;padding:24px;}
+.rp-divider{height:1px;background:var(--border);margin-bottom:14px;}
+.rp-cat-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid rgba(255,255,255,0.03);}
+.rp-cat-row:last-child{border-bottom:none;}
+.rp-cat-name{font-size:13px;font-weight:300;color:var(--text);min-width:100px;}
+.rp-cat-right{display:flex;align-items:center;gap:14px;}
+.rp-cat-bar-wrap{width:100px;height:3px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;}
+.rp-cat-pct{font-family:'Tenor Sans',sans-serif;font-size:8.5px;color:var(--muted2);min-width:28px;text-align:right;}
+.rp-cat-fill{height:100%;background:var(--exp);border-radius:2px;}
+.rp-cat-amt{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:400;min-width:80px;text-align:right;}
+
+/* Mobile */
 @media(max-width:900px){
-  .reports-wrap{padding:36px 24px;}
-  .r-title{font-size:42px;}
-  .r-cards{grid-template-columns:1fr;}
-  .r-card-val{font-size:28px;}
-  .r-charts{grid-template-columns:1fr;}
-  .r-chart-wrap{height:200px;}
+  .rp-wrap{padding:36px 24px;}
+  .rp-title{font-size:42px;}
+  .rp-cards{grid-template-columns:1fr;}
+  .rp-charts{grid-template-columns:1fr;}
+  .rp-chart-box{height:200px;}
 }
 @media(max-width:600px){
-  .reports-wrap{padding:24px 16px;}
-  .r-title{font-size:34px;}
-  .r-chart-wrap{height:180px;}
-  .r-cat-bar{width:60px;}
+  .rp-wrap{padding:24px 16px;}
+  .rp-title{font-size:34px;}
+  .rp-chart-box{height:180px;}
+  .rp-cat-bar-wrap{width:60px;}
 }
 </style>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <script>
+// Read theme AFTER page loads
 const root = document.getElementById('root');
-const isDark = root.classList.contains('dark');
-const textColor = isDark ? 'rgba(221,216,207,0.45)' : 'rgba(17,17,24,0.45)';
-const gridColor = isDark ? 'rgba(255,255,255,0.04)' : 'rgba(17,17,24,0.06)';
+function buildCharts(){
+  const dark = root.classList.contains('dark');
+  const tc = dark ? 'rgba(221,216,207,0.4)' : 'rgba(14,14,24,0.45)';
+  const gc = dark ? 'rgba(255,255,255,0.05)' : 'rgba(14,14,24,0.07)';
+  const incC = dark ? 'rgba(110,207,160,0.7)' : 'rgba(13,92,58,0.7)';
+  const expC = dark ? 'rgba(232,144,144,0.7)' : 'rgba(122,24,24,0.7)';
 
-const barCtx = document.getElementById('barChart');
-if(barCtx){
-  new Chart(barCtx, {
-    type: 'bar',
-    data: {
-      labels: {{ monthly_data | map(attribute='month') | list | tojson }},
-      datasets: [
-        {
-          label: 'Income',
-          data: {{ monthly_data | map(attribute='income') | list | tojson }},
-          backgroundColor: isDark ? 'rgba(125,211,168,0.65)' : 'rgba(21,94,69,0.65)',
-          borderRadius: 5, borderSkipped: false,
-        },
-        {
-          label: 'Expense',
-          data: {{ monthly_data | map(attribute='expense') | list | tojson }},
-          backgroundColor: isDark ? 'rgba(232,160,160,0.65)' : 'rgba(139,32,32,0.65)',
-          borderRadius: 5, borderSkipped: false,
+  const barEl = document.getElementById('barChart');
+  if(barEl){
+    if(barEl._chart) barEl._chart.destroy();
+    barEl._chart = new Chart(barEl, {
+      type:'bar',
+      data:{
+        labels:{{ monthly_data|map(attribute='month')|list|tojson }},
+        datasets:[
+          {label:'Income',data:{{ monthly_data|map(attribute='income')|list|tojson }},backgroundColor:incC,borderRadius:5,borderSkipped:false},
+          {label:'Expense',data:{{ monthly_data|map(attribute='expense')|list|tojson }},backgroundColor:expC,borderRadius:5,borderSkipped:false}
+        ]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{labels:{color:tc,font:{size:11},padding:16}}},
+        scales:{
+          x:{ticks:{color:tc,font:{size:10}},grid:{color:gc},border:{color:gc}},
+          y:{ticks:{color:tc,font:{size:10},callback:v=>'₹'+v.toLocaleString('en-IN')},grid:{color:gc},border:{color:gc}}
         }
-      ]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { labels: { color: textColor, font: { size: 11 }, padding: 16 } } },
-      scales: {
-        x: { ticks: { color: textColor, font:{size:10} }, grid: { color: gridColor }, border:{color:gridColor} },
-        y: { ticks: { color: textColor, font:{size:10}, callback: v => '₹'+v.toLocaleString('en-IN') }, grid: { color: gridColor }, border:{color:gridColor} }
       }
-    }
+    });
+  }
+
+  {% if categories %}
+  const pieEl = document.getElementById('pieChart');
+  if(pieEl){
+    if(pieEl._chart) pieEl._chart.destroy();
+    const cols = dark
+      ? ['rgba(232,144,144,0.78)','rgba(110,207,160,0.78)','rgba(196,163,90,0.78)','rgba(108,99,255,0.78)','rgba(90,160,232,0.78)','rgba(200,130,200,0.78)']
+      : ['rgba(122,24,24,0.72)','rgba(13,92,58,0.72)','rgba(28,63,110,0.72)','rgba(80,60,180,0.72)','rgba(40,100,160,0.72)','rgba(120,60,120,0.72)'];
+    pieEl._chart = new Chart(pieEl, {
+      type:'doughnut',
+      data:{
+        labels:{{ categories|map(attribute='category')|list|tojson }},
+        datasets:[{data:{{ categories|map(attribute='total')|list|tojson }},backgroundColor:cols,borderWidth:0,hoverOffset:8}]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,cutout:'62%',
+        plugins:{legend:{position:'bottom',labels:{color:tc,font:{size:11},padding:14,boxWidth:12}}}
+      }
+    });
+  }
+  {% endif %}
+
+  // Fix cat row borders
+  document.querySelectorAll('.cat-item').forEach(el=>{
+    el.style.borderBottomColor = dark ? 'rgba(255,255,255,0.03)' : 'rgba(14,14,24,0.06)';
+  });
+  // Fix cat bar bg
+  document.querySelectorAll('.rp-cat-bar-wrap').forEach(el=>{
+    el.style.background = dark ? 'rgba(255,255,255,0.06)' : 'rgba(14,14,24,0.08)';
   });
 }
 
-{% if categories %}
-const pieCtx = document.getElementById('pieChart');
-if(pieCtx){
-  new Chart(pieCtx, {
-    type: 'doughnut',
-    data: {
-      labels: {{ categories | map(attribute='category') | list | tojson }},
-      datasets: [{
-        data: {{ categories | map(attribute='total') | list | tojson }},
-        backgroundColor: isDark
-          ? ['rgba(232,160,160,0.75)','rgba(125,211,168,0.75)','rgba(196,163,90,0.75)','rgba(108,99,255,0.75)','rgba(90,160,232,0.75)','rgba(200,130,200,0.75)']
-          : ['rgba(139,32,32,0.7)','rgba(21,94,69,0.7)','rgba(26,61,110,0.7)','rgba(80,60,180,0.7)','rgba(40,100,160,0.7)','rgba(120,60,120,0.7)'],
-        borderWidth: 0, hoverOffset: 8
-      }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      cutout: '62%',
-      plugins: {
-        legend: { position: 'bottom', labels: { color: textColor, font:{size:11}, padding: 14, boxWidth: 12 } }
-      }
-    }
-  });
-}
-{% endif %}
-
-// Update charts on theme change
-new MutationObserver(()=>{ location.reload(); }).observe(root,{attributes:true,attributeFilter:['class']});
+buildCharts();
+// Rebuild on theme toggle
+new MutationObserver(buildCharts).observe(root,{attributes:true,attributeFilter:['class']});
 </script>
 {% endblock %}
