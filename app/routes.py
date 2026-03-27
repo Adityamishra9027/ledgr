@@ -564,42 +564,4 @@ def _process_message(user, from_num, text):
         send_whatsapp(from_num, '\n'.join(lines))
         
         
-        @app.route('/meta-webhook', methods=['GET', 'POST'])
-def meta_webhook():
-    if request.method == 'GET':
-        # Verification code (jo pehle se chal raha hai)
-        mode = request.args.get('hub.mode')
-        token = request.args.get('hub.verify_token')
-        challenge = request.args.get('hub.challenge')
-        if mode == 'subscribe' and token == os.environ.get('META_VERIFY_TOKEN'):
-            return challenge, 200
-        return 'Forbidden', 403
-
-    if request.method == 'POST':
-        data = request.get_json()
         
-        # Check if it's a message event
-        if data.get('object') == 'whatsapp_business_account':
-            try:
-                entry = data['entry'][0]
-                changes = entry['changes'][0]
-                value = changes['value']
-                
-                if 'messages' in value:
-                    message = value['messages'][0]
-                    from_number = message['from'] # User ka number
-                    user_msg = message['text']['body'] # User ka text
-                    
-                    # --- Yahan Tera Purana Logic ---
-                    # 1. User dhundo DB mein from_number se
-                    # 2. user_msg ko parse karo (e.g., "r 500 food")
-                    # 3. Response generate karo
-                    reply_text = f"Bhai, tera message mil gaya: {user_msg}" 
-                    
-                    # Reply bhejo
-                    send_whatsapp_message(from_number, reply_text)
-                    
-            except Exception as e:
-                print(f"Error processing Meta message: {e}")
-                
-        return 'EVENT_RECEIVED', 200
