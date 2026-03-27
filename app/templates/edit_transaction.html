@@ -24,14 +24,15 @@
         <div class="fg">
           <label class="fl2">Category</label>
           <select name="category" class="fs2">
-            {% for cat in ['Freelance','Salary','Business','Gig','Investment','Other Income','Food','Transport','Shopping','Bills','Entertainment','Health','Education','Other Expense'] %}
+            {% set cats = ['Freelance','Salary','Business','Gig','Investment','Other Income','Food','Transport','Shopping','Bills','Entertainment','Health','Education','Other Expense'] %}
+            {% for cat in cats %}
             <option value="{{ cat }}" {% if txn.category==cat %}selected{% endif %}>{{ cat }}</option>
             {% endfor %}
           </select>
         </div>
         <div class="fg" style="margin-bottom:0;">
           <label class="fl2">Description <span style="color:var(--muted2);text-transform:none;letter-spacing:0;font-size:11px;">— optional</span></label>
-          <input type="text" name="description" value="{{ txn.description or '' }}" class="fi2">
+          <input type="text" name="description" value="{{ txn.description or '' }}" placeholder="e.g. Payment from Rahul" class="fi2">
         </div>
         <div class="form-actions">
           <button type="submit" class="btn-p" style="padding:12px 28px;">Update ✓</button>
